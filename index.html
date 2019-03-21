@@ -26,11 +26,202 @@
             document.getElementsByTagName("head")[0].appendChild(link);
         </script>
     </head>
+
     <body>
         <div class="reveal">
             <div class="slides">
-                <section>Slide 1</section>
-                <section>Slide 2</section>
+                <section>
+                    <h1>Web Security</h1>
+                </section>
+                <section>
+                    <h1>The Philosophy</h1>
+                </section>
+                <section>
+                    <h2>The Triangle</h2>
+                    <img src="img/triangle.png" />
+                    <aside class="notes">Password lockout policies</aside>
+                </section>
+                <section>
+                    <h2>Principle of Least Privilege</h2>
+                </section>
+                <section>
+                    <h2>Security Theater</h2>
+                </section>
+                <section>
+                    <h1>The Risks</h1>
+                </section>
+                <section><h2>SQL Injection</h2></section>
+                <section>
+                    <h2>LDAP Injection, Command-Line Injection</h2>
+                </section>
+                <section><h2>XSS</h2></section>
+                <section>
+                    <ul>
+                        <li>Reflected</li>
+                        <li>Persistent</li>
+                        <li>DOM-based</li>
+                    </ul>
+                    <aside class="notes">
+                        Encoding is hard - e.g., JavaScript in HTML
+                    </aside>
+                </section>
+                <section><h2>CSRF</h2></section>
+                <section><h2>Clickjacking</h2></section>
+                <section>
+                    <h1>The Techniques</h1>
+                </section>
+                <section><h2>The Basics</h2></section>
+                <section>
+                    <ul>
+                        <li>Use a secure password hash.</li>
+                        <li>Sanitize all inputs.</li>
+                        <li>Use secure-by-default approaches.</li>
+                        <li>Use a reasonable password policy.</li>
+                    </ul>
+                    <aside class="notes">
+                        <p>Don't disable pasting passwords.</p>
+
+                        <p>
+                            Secure-by-default: parameterized queries, templating
+                            languages that auto-escape strings, spawning
+                            processes without spawning shells, and so on.
+                        </p>
+
+                        <p>
+                            Sanitize inputs: What if you're passing your
+                            parameter to a sproc that does query concatenation?
+                        </p>
+
+                        <p>
+                            Password policy: allow paste, high upper limit, no
+                            hints
+                        </p>
+                    </aside>
+                </section>
+                <section><h2>HTTPS</h2></section>
+                <section>
+                    <ul>
+                        <li>Do it for everything.</li>
+                        <li>Do it correctly - SSL Labs.</li>
+                        <li>Let's Encrypt</li>
+                        <li>CloudFlare</li>
+                    </ul>
+                    <aside class="notes">
+                        <p>
+                            SSL for login forms doesn't matter if someone can
+                            hack your landing page and redirect your login form.
+                            SSL for the main page doesn't matter if the
+                            individual assets are insecure ("mixed content
+                            warning"). (`//ajax.googleapis.com` style URLs)
+                        </p>
+                        <p>
+                            Chrome is forcing the issue. (Good Internet citizen?
+                            Or Google throwing their weight around? Or both?)
+                        </p>
+                    </aside>
+                </section>
+                <section>
+                    <h3>Secure Cookies</h3>
+                    HttpOnly
+                    <pre><code>Set-Cookie: MyCookieName=value; path=/; HttpOnly
+</code></pre>
+                    <pre><code>&lt;httpCookies httpOnlyCookies="true" />
+</code></pre>
+                    Secure
+                    <pre><code>Set-Cookie: MyCookieName=value; path=/; secure
+</code></pre>
+                    <pre><code>&lt;httpCookies requireSSL="true" />
+</code></pre>
+                </section>
+
+                <section><h2>HSTS</h2></section>
+                <section>
+                    <p>Chrome Dev Tools show HTTP 307 - "Internal Redirect."</p>
+                    <p>HSTS Preload</p>
+                    <p>(and understand the complications)</p>
+                </section>
+                <section><h2>upgrade-insecure-requests</h2></section>
+                <section>
+                    <h2>Subresource Integrity (SRI)</h2>
+                </section>
+                <section>
+                    <h3>SRI</h3>
+                    <pre><code>&lt;script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></code></pre>
+                </section>
+                <section>
+                    <h3>Getting SRI Hashes</h3>
+                    <p>Fake a hash then read Chrome Dev Tools.</p>
+                    <pre><code>openssl dgst -sha384 -binary jquery.min.js |
+    openssl base64 -A</code></pre>
+                    <a href="https://www.srihash.org/">
+                        https://www.srihash.org/
+                    </a>
+                </section>
+                <section>
+                    <h3>Providing a Fallback</h3>
+                    <pre><code>&lt;script>
+(window.jQuery) ||
+    document.write('&lt;script src="/scripts/jquery">&lt;/script>');
+&lt;/script></code></pre>
+                </section>
+                <section>
+                    <h3>Subresource Integrity (SRI)</h3>
+                    <a
+                        href="https://www.troyhunt.com/protecting-your-embedded-content-with-subresource-integrity-sri/"
+                    >
+                        https://www.troyhunt.com/protecting-your-embedded-content-with-subresource-integrity-sri/
+                    </a>
+                </section>
+                <section><h2>HPKP</h2></section>
+                <section><h2>CAA</h2></section>
+                <section><h2>Content Security Policies (CSP)</h2></section>
+                <section>
+                    <h3>CSP</h3>
+                    <p>
+                        Troy Hunt's demo of using Dev Tools console to break a
+                        site - then retry with CSP, and it fails
+                    </p>
+                </section>
+                <section>
+                    <h3>SameSite Cookies</h3>
+                    <p>https://www.owasp.org/index.php/SameSite</p>
+                </section>
+                <section>
+                    <h3>But wait, there's more!</h3>
+                    <ul>
+                        <li>Log errors</li>
+                        <li>Hide errors</li>
+                        <li>
+                            Reduce information leakage (like server versions in
+                            response headers)
+                        </li>
+                    </ul>
+                </section>
+                <section>
+                    <h3>But wait, there's more!</h3>
+                    <ul>
+                        <li>Credentials stuffing</li>
+                        <li>Secure password reset</li>
+                        <li>
+                            Account enumeration via email address submission
+                        </li>
+                        <li>2-factor authentication</li>
+                        <li>Make it somebody else's problem</li>
+                    </ul>
+                </section>
+                <section>
+                    <h3>But wait, there's more!</h3>
+                    <a href="https://www.owasp.org/index.php/Main_Page">
+                        OWASP
+                    </a>
+                    <a
+                        href="https://www.troyhunt.com/troys-ultimate-list-of-security-links/"
+                    >
+                        Troy's Ultimate List of Security Links
+                    </a>
+                </section>
             </div>
         </div>
 
@@ -42,6 +233,7 @@
             // - https://github.com/hakimel/reveal.js#configuration
             // - https://github.com/hakimel/reveal.js#dependencies
             Reveal.initialize({
+                history: true,
                 dependencies: [
                     { src: "plugin/markdown/marked.js" },
                     { src: "plugin/markdown/markdown.js" },
